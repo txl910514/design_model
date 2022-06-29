@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略模式</title>
+</head>
+
+<body>
+    <form action="javascript:;" id="registerForm" method="post">
+        <div>
+            请输入用户名：<input type="text" name="username">
+        </div>
+        <div> 请输入密码：<input type="text" name="password"></div>
+        <div> 请输入手机号码：<input type="text" name="phoneNumber"></div>
+        <button>提交</button>
+    </form>
+    <script>
+        var Validator = function () {
+            this.cache = [];
+        }
+        Validator.prototype.add = function (dom, rules) {
+            var that = this;
+            for (var i = 0; i < rules.length; i++) {
+                (function (rule) {
+                    var cacheRule = function () {
+                        return that.appendError(dom, rule);
+                    };
+                    dom.addEventListener(rule.trigger, cacheRule.bind(that, dom, rule))
+                    that.cache.push(cacheRule);
+                })(rules[i]);
+            }
+
+        }
+        Validator.prototype.appendError = function (dom, rule) {
+            if (!dom.parentNode.getElementsByClassName("error_line").length) {
+                let erDom = document.createElement("div");
+                erDom.className = 'error_line';
+                erDom.style.color = 'red';
+                dom.parentNode.appendChild(erDom);
+            }
+            var errorDom = dom.parentNode.getElementsByClassName("error_line")[0];
+            console.log(rule.message);
+            if (rule.message) {
+                if (rule.required && !dom.value) {
+                    errorDom.innerText = rule.message;
+                    return false
+                } else {
+                    errorDom.innerText = '';
+                    return true;
+                }
+            }
+            if (rule.validator) {
+                return rule.validator(dom.value, function (errorTxt) {
+                    if (errorTxt) {
+                        errorDom.innerText = errorTxt;
+                        return false;
+                    } else {
+                        errorDom.innerText = '';
+                        return true;
+                    }
+                });
+            }
+            errorDom.innerText = '';
+            return true;
+        }
+        Validator.prototype.start = function (callback) {
+            var result = true;
+            console.log(this.cache);
+            for (var i = 0; i < this.cache.length; i++) {
+                var domFunc = this.cache[i];
+                result = domFunc();
+            }
+            callback(result);
+        }
+        var registerForm = document.getElementById("registerForm");
+        var registerFormRule = {
+            username: [{
+                required: true,
+                message: '请输入用户名',
+                trigger: 'blur'
+            }, {
+                validator: function (value, callback) {
+                    if (value.length < 5) {
+                        return callback('用户名长度必须大于5')
+                    } else {
+                        return callback();
+                    }
+                },
+                trigger: 'blur'
+            }],
+            password: [{
+                required: true,
+                message: '请输入密码',
+                trigger: 'blur'
+            }, {
+                validator: function (value, callback) {
+                    if (value.length < 8) {
+                        return callback('密码长度必须大于8')
+                    } else {
+                        return callback();
+                    }
+                },
+                trigger: 'blur'
+            }],
+            phoneNumber: [{
+                required: true,
+                message: '请输入手机号',
+                trigger: 'blur'
+            }, {
+                validator: function (value, callback) {
+                    if (value.length !==11) {
+                        return callback('手机号长度必须等于11位')
+                    } else {
+                        return callback();
+                    }
+                },
+                trigger: 'blur'
+            }],
+        }
+        var registerFormFunc = function () {
+            var validator = new Validator();
+            for (var ruleKey in registerFormRule) {
+                validator.add(registerForm[ruleKey], registerFormRule[ruleKey]);
+            }
+            return validator;
+        }
+        var validatorFunc = registerFormFunc();
+        registerForm.onsubmit = function () {
+            validatorFunc.start(function (result) {
+                console.log(result);
+            });
+        }
+    </script>
+</body>
+
+</html>
