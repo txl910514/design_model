@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jquery代理模式</title>
+</head>
+<body>
+    <script>
+        var Jquey = {
+            guid: 0,
+            proxy: function (fn, context) {
+                if (typeof context == 'string') {
+                    var tmp = fn[context];
+                    context = fn;
+                    fn = tmp;
+                }
+                if (!Jquey.isFunction(fn)) {
+                    return undefined;
+                }
+                var args = Array.prototype.slice.call(arguments, 2),
+                proxy = function () {
+                    return fn.apply(context, args.concat(Array.prototype.slice.call(arguments)))
+                }
+                proxy.guid = fn.guid = fn.guid || proxy.guid || Jquey.guid++;
+                return proxy;
+            },
+            isFunction: function (fn) {
+                return typeof fn ===  'function';
+            }   
+        }
+       var fnc = Jquey.proxy(function () {
+            console.log(this, arguments);
+       }, {}, "a","b");
+       fnc();
+    </script>
+</body>
+</html>
