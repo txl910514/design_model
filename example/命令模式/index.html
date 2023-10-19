@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命令模式</title>
+</head>
+<body>
+    <script>
+        // 命令模式
+        var Command = function (receiver, pos) {
+            this.receiver = receiver;
+            this.pos = pos;
+            this.oldPos = null;
+        }
+        const commandStack = []
+        // 执行
+        Command.prototype.execute = function(){
+            this.receiver.start(a);
+            commandStack.push( function () {
+                this.receiver.start(a);
+            } ); // 记录命令栈
+            // 记录执行前动作，撤销命令好恢复
+        };
+        // 撤销
+        Command.prototype.undo = function(){
+
+        };
+        // 宏命令
+        var MacroCommand = function(){ 
+            return {
+                commandsList: [],
+                add: function( command ){
+                    this.commandsList.push( command ); 
+                },
+                execute: function(){
+                    for ( var i = 0, command; command = this.commandsList[ i++ ]; ){
+                        command.execute(); 
+                    }
+                },
+                undo: function () {
+                    for ( var i = 0, command; command = this.commandsList[ i++ ]; ){
+                        command.undo(); 
+                    }
+                } 
+            }
+        };
+    </script>
+</body>
+</html>l
