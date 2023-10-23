@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>装饰者模式</title>
+</head>
+<body>
+    <script>
+        Function.prototype.before = function (beforefn) {
+            var __self = this;
+            return function(){
+                beforefn.apply( this, arguments );
+                return __self.apply( this, arguments );
+            }
+        }
+        var func = function( param ){
+            console.log( param ); // 输出: {a: "a", b: "b"}
+        }
+        func = func.before( function( param ){ param.b = 'b';
+        });
+        func( {a: 'a'} );
+        // 抽象装饰者
+        function test() {
+            this.name = '1'
+        }
+        test.prototype.updateName = function (name) {
+            this.name = name
+        }
+        
+        const testDecorator  = function (decoratorObj) {
+            this.decoratorFunc = decoratorObj
+        }
+        testDecorator.prototype.getName = function () {
+            return this.decoratorFunc.name
+        }
+        const testObj = new test()
+        console.log(testObj.getName)
+        testObj.updateName(2)
+        const testObj1 = new testDecorator(testObj)
+        console.log(testObj1.getName())
+    </script>
+</body>
+</html>
