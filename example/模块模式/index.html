@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块模式</title>
+</head>
+<body>
+    <script>
+        var myModule = (function ($) {
+ 
+        // Module object
+            var module = {},
+            privateVariable = "Hello World"; // 私有属性
+
+            function privateMethod() { // 私有方法
+            // ...
+            }
+
+            module.publicProperty = "Foobar"; // 公有属性
+            module.publicMethod = function () {  //公有方法
+            console.log( privateVariable );
+            };
+
+            return module;
+
+        })(window);
+
+    </script>
+</body>
+</html>
