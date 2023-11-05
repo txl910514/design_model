@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工厂方法模式</title>
+</head>
+<body>
+    <script>
+        var Factory = function (type,content) {
+            console.log(this.Java)
+            if (this instanceof Factory) {
+                var s= new this[type](content)
+            } else {
+                return new Factory(type,content)
+            }
+        }
+
+        Factory.prototype = {
+            Java: function (content) {
+                console.log(content)
+            }
+        }
+        Factory('Java', 1)
+
+        // 安全的工厂方法
+        function testFics() {
+            if (!(this instanceof testFics)) {
+                return new testFics()
+            }
+            this.name = 1
+            this.page = 9
+        }
+       console.log(testFics())
+    </script>
+</body>
+</html>

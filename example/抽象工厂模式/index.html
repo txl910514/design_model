@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽象工厂模式</title>
+</head>
+<body>
+    <script>
+        var abstractVehicleFactory = (function () {
+ 
+ // Storage for our vehicle types
+ var types = {};
+
+ return {
+     getVehicle: function ( type, customizations ) {
+         var Vehicle = types[type];
+
+         return (Vehicle ? new Vehicle(customizations) : null);
+     },
+
+     registerVehicle: function ( type, Vehicle ) {
+         var proto = Vehicle.prototype;
+
+         // only register classes that fulfill the vehicle contract
+         if ( proto.drive && proto.breakDown ) {
+             types[type] = Vehicle;
+         }
+
+         return abstractVehicleFactory;
+     }
+ };
+})();
+
+
+// Usage:
+
+abstractVehicleFactory.registerVehicle( "car", Car );
+abstractVehicleFactory.registerVehicle( "truck", Truck );
+
+// Instantiate a new car based on the abstract vehicle type
+var car = abstractVehicleFactory.getVehicle( "car", {
+           color: "lime green",
+           state: "like new" } );
+
+// Instantiate a new truck in a similar manner
+var truck = abstractVehicleFactory.getVehicle( "truck", {
+           wheelSize: "medium",
+           color: "neon yellow" } );
+
+ // 第二种抽象类
+ var VehicleFactory = function (subType,superType) {
+    if ( typeof VehicleFactory(superType) === 'function') {
+        function F() {
+
+        }
+        F.prototype = new VehicleFactory[superType]()
+        subType.constructor = subType;
+        subType.prototype =  new F()    
+    }
+    else {
+        throw new Error('未创建该抽象类')
+    }
+ } 
+ 
+ VehicleFactory.Car = function () {
+    this.type = 'car'
+ }
+ VehicleFactory.Car.prototype = {
+    getPrice: function () {
+
+    }
+ }
+  // 子类
+  var BMW = function (price,speed) {
+        this.price = price;
+        this.speed = speed
+  }
+  VehicleFactory(BMW, 'Car')
+  BMW.prototype.getPrice = function () {
+    
+  }
+    </script>
+</body>
+</html>
